@@ -1,37 +1,40 @@
 //Geolocate
-const lat = 0;
-const long = 0;
+let lat, long, weather, airQuality;
 
 if ('geolocation' in navigator) {
     console.log('Geolocation available');
     navigator.geolocation.getCurrentPosition(async position => {
         try {
-        const lat = position.coords.latitude;
-        const long = position.coords.longitude;
-        document.getElementById('latitude').textContent = lat;
-        document.getElementById('longitude').textContent = long;
+            lat = position.coords.latitude;
+            long = position.coords.longitude;
+            document.getElementById('latitude').textContent = lat;
+            document.getElementById('longitude').textContent = long;
 
-        const api_url = `/weather/${lat}/${long}`;
-        const response = await fetch(api_url);
-        const json = await response.json();
+            const api_url = `/weather/${lat}/${long}`;
+            const response = await fetch(api_url);
+            const json = await response.json();
 
-        const weather = json.weather.currently;
-        document.getElementById('weather_summary').textContent = weather.summary;
-        document.getElementById('weather_temp').textContent = weather.temperature;
+            weather = json.weather.currently;
+            airQuality = json.air_quality;
 
-        const airQuality = json.air_quality;
-        const measurement = airQuality.results[0].measurements[0];
-        const timestamp = new Date(measurement.lastUpdated);
-        document.getElementById('aq_param').textContent = measurement.parameter;
-        document.getElementById('aq_quality').textContent = `${measurement.value} ${measurement.unit}`;
-        document.getElementById('aq_timestamp').textContent = timestamp.toLocaleString();
+            const measurement = airQuality.results[0].measurements[0];
+            const timestamp = new Date(measurement.lastUpdated);
+            
+            document.getElementById('weather_temp').textContent = weather.temperature;
+            document.getElementById('weather_summary').textContent = weather.summary;
+            document.getElementById('aq_param').textContent = measurement.parameter;
+            document.getElementById('aq_quality').textContent = `${measurement.value} ${measurement.unit}`;
+            document.getElementById('aq_timestamp').textContent = timestamp.toLocaleString();
 
-        console.log(json);
+            submitLocation();
         } catch (error) {
             console.error(error);
             document.getElementById('aq_param').textContent = 'Unknown';
             document.getElementById('aq_quality').textContent = 'Unknown';
             document.getElementById('aq_timestamp').textContent = 'Unknown';
+
+            airQuality = {results: []};
+            submitLocation();
         }
     });
 }
@@ -42,7 +45,7 @@ else {
 }
 
 async function submitLocation() {
-    const data = { lat, long };
+    const data = { lat, long, weather, airQuality };
     const options = {
         method: 'POST',
         headers: {
@@ -54,5 +57,3 @@ async function submitLocation() {
     const responseJson = await response.json();
     console.log(responseJson);
 }
-
-document.getElementById('button').addEventListener('click', submitLocation)
