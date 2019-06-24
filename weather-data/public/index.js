@@ -19,7 +19,7 @@ if ('geolocation' in navigator) {
 
             const measurement = airQuality.results[0].measurements[0];
             const timestamp = new Date(measurement.lastUpdated);
-            
+
             document.getElementById('weather_temp').textContent = weather.temperature;
             document.getElementById('weather_summary').textContent = weather.summary;
             document.getElementById('aq_param').textContent = measurement.parameter;
@@ -33,19 +33,25 @@ if ('geolocation' in navigator) {
             document.getElementById('aq_quality').textContent = 'Unknown';
             document.getElementById('aq_timestamp').textContent = 'Unknown';
 
-            airQuality = {results: []};
+            airQuality = {
+                results: []
+            };
             submitLocation();
         }
     });
-}
-else {
+} else {
     const msg = 'Geolocation unavailable';
     document.getElementById("latitude").textContent = msg;
     document.getElementById("longitude").textContent = msg;
 }
 
 async function submitLocation() {
-    const data = { lat, long, weather, airQuality };
+    const data = {
+        lat,
+        long,
+        weather,
+        airQuality
+    };
     const options = {
         method: 'POST',
         headers: {

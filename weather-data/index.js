@@ -7,7 +7,9 @@ const fetch = require('node-fetch');
 app.listen(3000, () => console.log('listening at 3000'));
 
 app.use(express.static('public'));
-app.use(express.json({limit: '1mb'}));
+app.use(express.json({
+    limit: '1mb'
+}));
 
 const database = new Datastore('database.db');
 database.loadDatabase();
@@ -16,10 +18,13 @@ const api_key = process.env.API_KEY;
 
 app.get('/api', (request, response) => {
     database.find({}, (err, data) => {
-        if (err) { response.end; return; }
+        if (err) {
+            response.end;
+            return;
+        }
         response.json(data);
     });
-    
+
 });
 
 app.post('/api', (request, response) => {
