@@ -1,98 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name = "viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-        <title>Fetch and Graph CSV</title>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
-    </head>
-    <body>
-        <h1>Global Averate Temperatures 1880-2018</h1>
-        <canvas id="chart" width="800" height="400"></canvas>
 
-        <script>
-            // Data from: https://data.giss.nasa.gov/gistemp
-            // Mean form: https://earthobservatory.nasa.gov/world-of-change/DecadalTemp
-            
-            window.addEventListener('load', graph);
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Fetch and Graph CSV</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+</head>
 
-            async function graph() {
-                const data = await getData();
+<body>
+    <h1>Global Averate Temperatures 1880-2018</h1>
+    <canvas id="chart" width="800" height="400"></canvas>
 
-                const ctx = document.getElementById('chart').getContext('2d');
-                const myChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: data.years,
-                        datasets: [
-                            {
-                                label: 'Global Temperature in °C',
-                                data: data.temps,
-                                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                                borderColor: 'rgba(255, 99, 132, 1)',
-                                borderWidth: 1,
-                                fill: false
-                            },
-                            {
-                                label: 'Northern Hemisphere Temperatures in °C',
-                                data: data.northern,
-                                backgroundColor: 'rgba(99, 132, 255, 0.5)',
-                                borderColor: 'rgba(99, 132, 255, 1)',
-                                borderWidth: 1,
-                                fill: false
-                            },
-                            {
-                                label: 'Southern Hemisphere Temperatures in °C',
-                                data: data.southern,
-                                backgroundColor: 'rgba(99, 255, 132, 0.5)',
-                                borderColor: 'rgba(99, 255, 132, 1)',
-                                borderWidth: 1,
-                                fill: false
-                            }
-                        ]
-                    },
-                    options: {
-                        scales: {
-                            yAxes: [
-                                {
-                                    ticks: {
-                                        //Include °C in the ticks
-                                        callback: function(value, index, values) {
-                                            return value + '°C';
-                                        }
-                                    }
-                                }
-                            ]
+    <script>
+        // Data from: https://data.giss.nasa.gov/gistemp
+        // Mean form: https://earthobservatory.nasa.gov/world-of-change/DecadalTemp
+
+        window.addEventListener('load', graph);
+
+        async function graph() {
+            const data = await getData();
+
+            const ctx = document.getElementById('chart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.years,
+                    datasets: [{
+                            label: 'Global Temperature in °C',
+                            data: data.temps,
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1,
+                            fill: false
+                        },
+                        {
+                            label: 'Northern Hemisphere Temperatures in °C',
+                            data: data.northern,
+                            backgroundColor: 'rgba(99, 132, 255, 0.5)',
+                            borderColor: 'rgba(99, 132, 255, 1)',
+                            borderWidth: 1,
+                            fill: false
+                        },
+                        {
+                            label: 'Southern Hemisphere Temperatures in °C',
+                            data: data.southern,
+                            backgroundColor: 'rgba(99, 255, 132, 0.5)',
+                            borderColor: 'rgba(99, 255, 132, 1)',
+                            borderWidth: 1,
+                            fill: false
                         }
+                    ]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                //Include °C in the ticks
+                                callback: function (value, index, values) {
+                                    return value + '°C';
+                                }
+                            }
+                        }]
                     }
-                });
-            }
+                }
+            });
+        }
 
-            async function getData() {
-                //Load data from file
-                const response = await fetch('ZonAnn.Ts+dSST.csv');
-                const data = await response.text();
+        async function getData() {
+            //Load data from file
+            const response = await fetch('ZonAnn.Ts+dSST.csv');
+            const data = await response.text();
 
-                //Create local variables
-                const years = [];
-                const temps = [];
-                const northern = [];
-                const southern = [];
+            //Create local variables
+            const years = [];
+            const temps = [];
+            const northern = [];
+            const southern = [];
 
-                //Parse data
-                const table = data.split('\n').slice(1);
-                table.forEach(row => {
-                    const columns = row.split(',');
+            //Parse data
+            const table = data.split('\n').slice(1);
+            table.forEach(row => {
+                const columns = row.split(',');
 
-                    years.push(columns[0]);
-                    temps.push(14 + parseFloat(columns[1]));
-                    northern.push(14 + parseFloat(columns[2]));
-                    southern.push(14 + parseFloat(columns[3]));
-                });
+                years.push(columns[0]);
+                temps.push(14 + parseFloat(columns[1]));
+                northern.push(14 + parseFloat(columns[2]));
+                southern.push(14 + parseFloat(columns[3]));
+            });
 
-                return {years, temps, northern, southern};
-            }
-        </script>
-    </body>
+            return {
+                years,
+                temps,
+                northern,
+                southern
+            };
+        }
+    </script>
+</body>
+
 </html>

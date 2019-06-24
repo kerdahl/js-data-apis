@@ -8,7 +8,11 @@ function submitLocation() {
             document.getElementById('longitude').textContent = long;
             const mood = document.getElementById('mood').value;
 
-            const data = { lat, long, mood };
+            const data = {
+                lat,
+                long,
+                mood
+            };
             const options = {
                 method: 'POST',
                 headers: {
@@ -20,8 +24,7 @@ function submitLocation() {
             const responseJson = await response.json();
             console.log(responseJson);
         });
-    }
-    else {
+    } else {
         const msg = 'Geolocation unavailable';
         document.getElementById("latitude").textContent = msg;
         document.getElementById("longitude").textContent = msg;
